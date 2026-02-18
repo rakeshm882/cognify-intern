@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Level 3 - Task 1 - Image Manipulation</title>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f5f5f5;
+      padding: 20px;
+      color: #333;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 10px;
+    }
+
+    h2 {
+      margin: 30px 0 10px;
+      color: #555;
+    }
+
+    /* ── Part 1: Image Gallery ── */
+    .gallery {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .gallery img {
+      width: 150px;
+      height: 100px;
+      object-fit: cover;
+      border: 2px solid #ccc;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+
+    .gallery img:hover {
+      border-color: #888;
+    }
+
+    /* Enlarged image overlay */
+    #overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.8);
+      justify-content: center;
+      align-items: center;
+      z-index: 999;
+    }
+
+    #overlay.show {
+      display: flex;
+    }
+
+    #overlay img {
+      max-width: 80%;
+      max-height: 80%;
+      border-radius: 8px;
+      border: 3px solid white;
+    }
+
+    #overlay p {
+      color: white;
+      position: absolute;
+      top: 20px;
+      right: 30px;
+      font-size: 28px;
+      cursor: pointer;
+    }
+
+    /* ── Part 2: Slideshow ── */
+    .slideshow {
+      position: relative;
+      width: 500px;
+      max-width: 100%;
+      margin: 0 auto;
+      border: 2px solid #ccc;
+      border-radius: 8px;
+      overflow: hidden;
+      background-color: #ddd;
+    }
+
+    .slide {
+      display: none;
+    }
+
+    .slide.active {
+      display: block;
+    }
+
+    .slide img {
+      width: 100%;
+      height: 280px;
+      object-fit: cover;
+    }
+
+    .slide-caption {
+      text-align: center;
+      padding: 8px;
+      background-color: #333;
+      color: white;
+      font-size: 14px;
+    }
+
+    /* Dot indicators */
+    .dots {
+      text-align: center;
+      margin-top: 10px;
+    }
+
+    .dot {
+      display: inline-block;
+      width: 12px;
+      height: 12px;
+      background-color: #bbb;
+      border-radius: 50%;
+      margin: 0 4px;
+      cursor: pointer;
+    }
+
+    .dot.active {
+      background-color: #555;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Level 3 - Task 1: Image Manipulation</h1>
+
+  <!-- Part 1: Image Gallery -->
+  <h2>Part 1: Image Gallery (click to enlarge)</h2>
+
+  <div class="gallery">
+    <img src="https://picsum.photos/id/10/300/200"  alt="Image 1" onclick="openImage(this.src)">
+    <img src="https://picsum.photos/id/20/300/200"  alt="Image 2" onclick="openImage(this.src)">
+    <img src="https://picsum.photos/id/30/300/200"  alt="Image 3" onclick="openImage(this.src)">
+    <img src="https://picsum.photos/id/40/300/200"  alt="Image 4" onclick="openImage(this.src)">
+    <img src="https://picsum.photos/id/50/300/200"  alt="Image 5" onclick="openImage(this.src)">
+    <img src="https://picsum.photos/id/60/300/200"  alt="Image 6" onclick="openImage(this.src)">
+  </div>
+
+  <!-- Overlay for enlarged image -->
+  <div id="overlay" onclick="closeImage()">
+    <p>&#10005;</p>
+    <img id="enlargedImg" src="" alt="Enlarged Image">
+  </div>
+
+  <!-- Part 2: Slideshow -->
+  <h2>Part 2: Auto Image Slideshow</h2>
+
+  <div class="slideshow">
+    <div class="slide active">
+      <img src="https://picsum.photos/id/10/600/280" alt="Slide 1">
+      <div class="slide-caption">Slide 1 - Nature</div>
+    </div>
+    <div class="slide">
+      <img src="https://picsum.photos/id/20/600/280" alt="Slide 2">
+      <div class="slide-caption">Slide 2 - City</div>
+    </div>
+    <div class="slide">
+      <img src="https://picsum.photos/id/30/600/280" alt="Slide 3">
+      <div class="slide-caption">Slide 3 - Mountains</div>
+    </div>
+    <div class="slide">
+      <img src="https://picsum.photos/id/40/600/280" alt="Slide 4">
+      <div class="slide-caption">Slide 4 - Ocean</div>
+    </div>
+  </div>
+
+  <!-- Dot indicators -->
+  <div class="dots" id="dots"></div>
+
+  <script>
+    // ── Part 1: Open enlarged image ──
+    function openImage(src) {
+      document.getElementById("enlargedImg").src = src;
+      document.getElementById("overlay").classList.add("show");
+    }
+
+    function closeImage() {
+      document.getElementById("overlay").classList.remove("show");
+    }
+
+    // ── Part 2: Auto Slideshow ──
+    var slides = document.querySelectorAll(".slide");
+    var currentSlide = 0;
+
+    // Create dots
+    var dotsContainer = document.getElementById("dots");
+    for (var i = 0; i < slides.length; i++) {
+      var dot = document.createElement("span");
+      dot.classList.add("dot");
+      if (i === 0) dot.classList.add("active");
+      dot.setAttribute("data-index", i);
+      dot.onclick = function() {
+        goToSlide(parseInt(this.getAttribute("data-index")));
+      };
+      dotsContainer.appendChild(dot);
+    }
+
+    function goToSlide(index) {
+      slides[currentSlide].classList.remove("active");
+      document.querySelectorAll(".dot")[currentSlide].classList.remove("active");
+
+      currentSlide = index;
+
+      slides[currentSlide].classList.add("active");
+      document.querySelectorAll(".dot")[currentSlide].classList.add("active");
+    }
+
+    // Auto transition every 2.5 seconds
+    setInterval(function() {
+      var next = (currentSlide + 1) % slides.length;
+      goToSlide(next);
+    }, 2500);
+  </script>
+
+</body>
+</html>
